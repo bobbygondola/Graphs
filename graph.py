@@ -10,6 +10,8 @@ class Queue():
             return None
     def size(self):
         return len(self.queue)
+    
+    
 class Graph:
     def __init__(self):
         self.vertices = {}
@@ -54,6 +56,9 @@ class Graph:
                 # Add all neighbors to the queue
                 for neighbor in self.get_neighbors(v):
                     q.enqueue(neighbor)
+
+
+
 
     def bfs(self, starting_vertex_id, target_vertex_id):
         pass
