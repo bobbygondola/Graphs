@@ -6,15 +6,18 @@ STEPS
     - add_edge   / connection
     - get_neighbors
     
+    - bfs ( BREADTH-FIRST SEARCH )
     - bft ( breadth-first traversal )
+    
     - dft ( depth-first traversal )
     - dft_recursive ( ^ but recursive )
-    
-    - bfs ( BREADTH-FIRST SEARCH )
     - dfs ( DEPTH-FIRST SEARCH)
     - dfs_recursive ( ^ but revcursive )
 """
 from util import Stack, Queue  # These may come in handy
+
+
+# ------------------------------------------------- INITIAL GRAPH CLASS (WITH HELPER FUNCTIONS)
 
 class Graph:
 
@@ -35,6 +38,9 @@ class Graph:
         # Get all neighbors (edges) of a vertex.
         return self.vertices[vertex_id]
 
+
+    # ------------------------------------------------- BREADTH-FIRST TRAVERSAL
+
     def bft(self, starting_vertex):
         """
         Print each vertex in breadth-first order
@@ -47,15 +53,20 @@ class Graph:
         
         while q.size() > 0:
             # Dequeue a vert
-            v = q.dequeue()
+            current_node = q.dequeue()
             # If not visited
-            if v not in visited:
-                print(v)
+            if current_node not in visited:
+                print(current_node)
                 # Mark as visited
-                visited.add(v)
+                visited.add(current_node)
                 # Add all neighbors to the queue
-                for neighbor in self.get_neighbors(v):
+                for neighbor in self.get_neighbors(current_node):
                     q.enqueue(neighbor)
+    
+    
+    
+    # ------------------------------------------------- BREADTH-FIRST SEARCH
+    
     
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -85,6 +96,10 @@ class Graph:
                 q.enqueue(new_path)
                 
 
+
+    # ------------------------------------------------- DEPTH-FIRST TRAVERSAL
+    
+    
     def dft(self, starting_vertex): 
         """
         Print each vertex in depth-first order
@@ -103,25 +118,26 @@ class Graph:
                     s.push(next_vertex)
 
                     
-                    
+    
+    
+    # ------------------------------------------------- DEPTH-FIRST TRAVERSAL (RECURSIVELY)
 
-    def dft_recursive(self, starting_vertex, visited = None):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
+    def dft_recursive(self, starting_vertex_id, visited=None):
 
-        This should be done using recursion.
-        """
         if visited is None:
             visited = set()
-        if starting_vertex not in visited:
-            visited.add(starting_vertex)
-            print(starting_vertex)
-            for next_vertex in self.get_neighbors(starting_vertex):
-                self.dft_recursive(next_vertex, visited)
 
-        
+        visited.add(starting_vertex_id)
 
+        print(starting_vertex_id)
+        # print(visited)
+
+        for neighbor in self.vertices[starting_vertex_id]:
+            if neighbor not in visited:
+                self.dft_recursive(neighbor, visited)
+                
+    # ------------------------------------------------- DEPTH-FIRST SEARCH
+    
     def dfs(self, starting_vertex, destination_vertex):
         """
         Return a list containing a path from
@@ -135,41 +151,53 @@ class Graph:
         visited = set()
 
         while s.size() > 0:
-            v = s.pop()
-            if v not in visited:
-                visited.add(v)
-                lst.append(v)
-                if v == destination_vertex:
+            current_node = s.pop()
+            if current_node not in visited:
+                visited.add(current_node)
+                lst.append(current_node)
+                if current_node == destination_vertex:
                     return lst
 
-                for next_vertex in self.get_neighbors(v):
+                for next_vertex in self.get_neighbors(current_node):
                     s.push(next_vertex)
+                    
+                    
+                    
+    # ------------------------------------------------- DEPTH-FIRST SEARCH (RECURSIVELY)
 
-    def dfs_recursive(self, starting_vertex, destination_vertex, visited=None, path=None):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-
-        This should be done using recursion.
-        """
-        if visited == None:
+    def dfs_recursive(self, starting_vert, ending_vert, visited=None, path=None):
+        if visited is None:
             visited = set()
 
-        if path == None:
+        if path is None:
             path = []
 
-        visited.add(starting_vertex)
-        new_path = [*path, starting_vertex]
+        visited.add(starting_vert)
 
-        if new_path[-1] == destination_vertex:
-            return new_path        
+        path = path + [starting_vert]  # subtly makes a copy of the path
 
-        for neighbor in self.get_neighbors(starting_vertex):
+        """
+        # Line above equivalent to:
+
+        path = list(path)  # make a copy
+        path.append(starting_vert)
+        """
+
+        if starting_vert == ending_vert:
+            return path
+
+        for neighbor in self.get_neighbors(starting_vert):
             if neighbor not in visited:
-                neighbor_path = self.dfs_recursive(neighbor, destination_vertex, visited, new_path)
-                if neighbor_path:
-                    return neighbor_path
+                new_path = self.dfs_recursive(neighbor, ending_vert, visited, path)
+                if new_path is not None:
+                    return new_path
+
+        return None
+
+
+
+
+
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -223,7 +251,7 @@ if __name__ == '__main__':
         1, 2, 4, 6, 3, 5, 7
     '''
     print(f"DFT Result => {graph.dft(1)}")
-    graph.dft_recursive(1)
+    print(f"DFT RECURSIVE RESULT -> {graph.dft_recursive(1)}")
 
     '''
     Valid BFS path:
@@ -236,5 +264,5 @@ if __name__ == '__main__':
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-    print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
+    print(f"DFS RESULT -> {graph.dfs(1, 6)}")
+    print(f"DFS RECURSIVE RESULT -> {graph.dfs_recursive(1, 6)}")
