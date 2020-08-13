@@ -129,8 +129,7 @@ class Graph:
 
         visited.add(starting_vertex_id)
 
-        print(starting_vertex_id)
-        # print(visited)
+        print(starting_vertex_id) # prints first recursively
 
         for neighbor in self.vertices[starting_vertex_id]:
             if neighbor not in visited:
@@ -242,6 +241,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 5, 6
     '''
     print(f" BFT RESULT => {graph.bft(1)}")
+    print(f" NEIGHBORS => {graph.get_neighbors(2)}")
 
     '''
     Valid DFT paths:
